@@ -1,7 +1,9 @@
 import numpy as np
 
+import generate_fading
 
-def channel_TDL(x: list, fd, sr, channel_model: str, ds, nslot, elevation):
+
+def channel_TDL(x: list, fd, fs, channel_model: str, ds, nslot, elevation):
     b = 0.047  # 多径功率
     d = 1.41  # 阴影标准差
     u = 0.91  # 阴影均值
@@ -32,10 +34,19 @@ def channel_TDL(x: list, fd, sr, channel_model: str, ds, nslot, elevation):
     power = np.array(pdp[int(elevation / 5 - 1)][channel_model][1])
     kfactor = np.array(pdp[int(elevation / 5 - 1)][channel_model][2])
 
-    delay = np.floor(ds * delay * sr)
+    delay = np.floor(ds * delay * fs)
     power = 10 ** (power / 10)
 
-    fading = np.zeros([len(delay), len(x)])
+    # 计算衰落
+    fading = np.zeros([len(delay), len(x)], dtype=complex)
     if channel_model == 'NTN-TDL-A' or 'NTN-TDL-B':
         for i in range(len(delay)):
-            fading()
+            fading[i] = generate_fading.rayleigh(fd, fs, len(x), i, nslot)
+    elif channel_model == 'NTN-TDL-C' or 'NTN-TDL-D':
+        fading[1] = generate_fading.rician(fd, fs, len(x), kfactor, nslot)
+        for i in range(2, len(delay)):
+            fading[i] = generate_fading.rayleigh(fd, fs, len(x), i, nslot)
+
+    # 过信道滤波器
+
+    return None
