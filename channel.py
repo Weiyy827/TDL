@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import signal
 
 import generate_fading
 
@@ -48,5 +49,11 @@ def channel_TDL(x: list, fd, fs, channel_model: str, ds, nslot, elevation):
             fading[i] = generate_fading.rayleigh(fd, fs, len(x), i, nslot)
 
     # 过信道滤波器
+    filterOut = np.zeros([len(delay), len(x)], dtype=complex)
+    for i in range(len(delay)):
+        filter_coeff = np.append(np.zeros(int(delay[i])), 1)
+        filterOut[i] = signal.lfilter(filter_coeff, 1, x)
+        filterOut[i] = filterOut[i] * fading[i]
 
+    y = np.sum(filterOut, 0)
     return None
