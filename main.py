@@ -1,4 +1,4 @@
-import generate_m
+from generate_m import generate_coeff, generate_m_sequence
 from channel import channel_TDL
 from modulation import bpskmod
 
@@ -11,8 +11,8 @@ ds = 10e-7  # 时延扩展
 fd = 100  # 多普勒扩展
 
 # 生成m序列
-coeff = generate_m.generate_coeff(m_len)
-m_sequence = generate_m.generate_m_sequence(coeff)
+coeff = generate_coeff(m_len)
+m_sequence = generate_m_sequence(coeff)
 
 nslot = 2  # 每次时隙所对应的数据起始位置时间
 c = 3e8  # 光速，单位m/s

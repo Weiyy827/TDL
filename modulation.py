@@ -8,3 +8,4 @@ def bpskmod(bit_sequence: list):
         else:
             symbol_sequence.append(symbol0)
     return symbol_sequence
+

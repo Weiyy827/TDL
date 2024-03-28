@@ -1,7 +1,6 @@
 import numpy as np
 from scipy import signal
-
-import generate_fading
+from generate_fading import rayleigh, rician
 
 
 def channel_TDL(x: list, fd, fs, channel_model: str, ds, nslot, elevation):
@@ -42,11 +41,11 @@ def channel_TDL(x: list, fd, fs, channel_model: str, ds, nslot, elevation):
     fading = np.zeros([len(delay), len(x)], dtype=complex)
     if channel_model == 'NTN-TDL-A' or 'NTN-TDL-B':
         for i in range(len(delay)):
-            fading[i] = generate_fading.rayleigh(fd, fs, len(x), i, nslot)
+            fading[i] = rayleigh(fd, fs, len(x), i, nslot)
     elif channel_model == 'NTN-TDL-C' or 'NTN-TDL-D':
-        fading[1] = generate_fading.rician(fd, fs, len(x), kfactor, nslot)
+        fading[1] = rician(fd, fs, len(x), kfactor, nslot)
         for i in range(2, len(delay)):
-            fading[i] = generate_fading.rayleigh(fd, fs, len(x), i, nslot)
+            fading[i] = rayleigh(fd, fs, len(x), i, nslot)
 
     # 过信道滤波器
     filterOut = np.zeros([len(delay), len(x)], dtype=complex)
